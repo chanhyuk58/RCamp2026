@@ -1,11 +1,10 @@
 ---
 title: "Day 2 Lecture"
-author: "Cecilia Y. Sui"
-date: "01/11/2022"
-output: pdf_document
-editor_options: 
-  markdown: 
-    wrap: 72
+author: "Cecilia Y. Sui and all other TAs"
+date: "`r format(Sys.time(), '%m/%d/%y')`"
+output: 
+  pdf_document:
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
@@ -35,12 +34,118 @@ knit_hooks$set(output = function(x, options) {
 
 # Day 2 Outline:
 
-1.  Tips on Writing Code
-2.  Loading and Saving Data
-3.  R Notations
-4.  Modifying Values
+1. Functions
+2. Tips on Writing Code
+3. Loading and Saving Data
+4. R Notations
+5. Modifying Values
 
-# 1. Tips on Writing Code
+# Functions
+Function is a set of instructions that performs a specific task, typically taking
+input (known as arguments), processing these inputs, and returning an output. 
+Arguments is a value that you pass to a function when you call it. The function then uses this value as input to perform its operations. Think of it like giving ingredients to a chef; the ingredients (arguments) are what the chef (function) needs to make a meal (perform a task or calculation). 
+R comes with many functions that you can use to do sophisticated tasks like
+random sampling. For example, you can round a number with the **round()**
+function, or calculate its factorial with the **factorial()** function. Using a
+function is pretty simple: just write the name of the function and then the data
+you want the function to operate on in parentheses. 
+
+```{r}
+# The following two functions come with base R.
+# You do not need to install and load new packages to use them.
+round(3.1415)
+factorial(3)
+```
+
+The data that you pass into the function is called the function’s argument. The
+argument can be raw data, an R object, or even the results of another R
+function. In this last case, R will work **from the innermost function to the
+outermost**.
+```{r}
+die <- 1:6
+die
+mean(1:6)
+mean(die)
+round(mean(die))
+ceiling(mean(die)) # rounds up
+floor(mean(die)) # rounds down
+ceiling(4.000001)
+floor(3.99999999)
+```
+
+```{r eval=FALSE}
+round(3.1415926535, numbers = 1)
+# Error in round(3.1415, numbers = 3) : unused argument (numbers = 3)
+?round
+round(x = 3.1415926535, digits = 3)
+```
+
+## Arguments
+
+Often, the name of the first argument is not very descriptive, and it is usually
+obvious what the first piece of data refers to anyways.
+
+But how do you know which argument names to use? If you try to use a name that a
+function does not expect, you will likely get an error.
+
+If you are not sure which names to use with a function, you can look up the
+function’s arguments with **args()**. To do this, simply plug in the name of the
+function into the parentheses. For example, you can see that the round function
+takes two arguments, one named x and one named digits:
+
+```{r}
+args(round)
+round(3.14, digits = 1)
+args(ceiling)
+args(floor)
+```
+
+Did you notice that `args()` shows that the digits argument of round is already set
+to 0?
+
+Frequently, an R function will take optional arguments like digits. These
+arguments are considered optional because they come with a **default value**.
+You can pass a new value to an optional argument if you want, and R will use the
+default value if you do not.
+
+For example, `round()` will round your number to 0 digits past the decimal point
+by default. To override the default, you can always specify your own argument
+value. For example,
+```{r n}
+round(3.1415)
+round(3.1415, digits = 2)
+```
+
+When you first start to learn R, it is recommended that you write out the
+**names of all your arguments** when you do a function call with multiple
+arguments. This not only helps you to learn the functions and their arguments
+better and faster, but also helps others to understand your code more easily.
+Moreover, you might not always remember correctly how the arguments should be
+ordered when first using these functions. Writing out the argument names helps
+**prevent errors**.
+
+After using R for a while, you might notice that it is often for R users to skip
+the names for the first one or two arguments, and only write out the names for
+the rest of arguments.
+
+If you do not write out the names of your arguments, R will match your values to
+the arguments in your function by order. You can learn about the correct order
+by **running the args() function, hovering over the function call, or using the
+help pages **.
+
+
+As you provide more arguments, it becomes more likely that your order and R’s
+order may **not align**. As a result, values may get passed to the wrong
+argument. Argument names prevent this. R will always match a value to its
+argument name, no matter where it appears in the order of arguments.
+
+For example, if we reverse the order of arguments in the function call above, it
+is still equivalent.
+```{r}
+round(digits = 2, x = 3.1415) # reversed order, specify argument name
+```
+
+# Tips on Writing Code
 
 By default, RStudio will save your current workspace when you quit.
 While convenient, this can mean that you make one-off changes to your
@@ -49,7 +154,7 @@ fresh session every time you open RStudio means you’ll learn to keep
 every step of your analysis in your script, and you’ll know that you can
 get back to where you were by rerunning the script.
 
-## 1.1 Code readability
+## Coding Style
 
 There are two very good reasons to try to write your code in a clear,
 understandable way:
@@ -63,16 +168,17 @@ the results and output you want, but proves very difficult to make
 changes to when you have to come back to it (because a reviewer asked
 for one additional analysis, etc. which happens very often.)
 
-### 1.1.1 Formatting Tips
+### Formatting Tips
 
-"You can improve the readability of your code a lot by following a few
+You can improve the readability of your code a lot by following a few
 simple rules:
 
--   Put spaces between and around variable names and operators (=+-\*/)
--   Break up long lines of code
--   Use meaningful variable names composed of 2 or 3 words" (avoid
+- Put spaces between and around variable names and operators (`=+-\*/`)
+- Break up long lines of code
+- Use meaningful variable names composed of 2 or 3 words" (avoid
     abbreviations unless they’re very common and you use them very
     consistently)
+- Indentation (2 or 4 spaces)
 
 These rules can mean the difference between this:
 
@@ -92,17 +198,17 @@ R will treat both pieces of code exactly the same, but for any humans
 reading, the nicer layout and meaningful names make it much easier to
 understand what’s happening, and spot any errors in syntax or intent.
 
-### 1.1.2 Keep a Consistent Style
+### Keep a Consistent Style
 
 Try to follow a consistent style for naming things, e.g. using \*\*
 snake_case **for all your variable names in your R code, and** TitleCase
 \*\* for the columns in your data. Either style is probably better than
-lowercase with no spacing allmashedtogether. It doesn’t particularly
-matter what that style is, as long as you’re consistent.
+lowercase with no spacing allmashedtogether. DO NOT use `.` in names (`do.not.do.this`). 
+It doesn’t particularly matter what that style is, as long as you’re consistent.
 
-### 1.1.3 Write LOTS of Comments
+### Write LOTS of Comments
 
-One of the best things you can do to make R code readable and
+As any other code, one of the best things you can do to make R code readable and
 understandable is write comments. R ignores lines that start with \# so
 you can write whatever you want and it won’t affect the way your code
 runs.
@@ -131,14 +237,14 @@ You can also put comments that remind you to fix certain errors.
 
 ```
 
-### 1.1.4 Google's R Style Guide
+### Google's R Style Guide
 
 In QPM I, we would like you to follow the R Programming Style Guide by
 Google to make your R code easier to read, share, and verify. For more
 details, please check out this link:
-<http://web.stanford.edu/class/cs109l/unrestricted/resources/google-style.html>
+<https://google.github.io/styleguide/Rguide.html>
 
-## 1.2 Organizing Your Files
+## Organizing Your Files
 
 Working directories are extremely useful for keeping your work
 organized. When you have hundreds of R files along with images and data,
@@ -146,25 +252,27 @@ it is much easier to find things using directories instead of putting
 all the files in one folder. A directory is basically a folder that you
 have created to save all your work.
 
-### 1.2.1 Get the working directory
+### Get the working directory
 
 "Each time you open R, it links itself to a directory on your computer,
 which R calls the working directory. This is where R will look for files
 when you attempt to load them, and it is where R will save files when
 you save them. The location of your working directory will vary on
 different computers. You can find out which directory by running the
-getwd () function, which stands for "get the working directory".
+`getwd()` function, which stands for "get the working directory".
+
+By default your working directory is set to be *the location of your current file*. For example, if you have created an R script as `~/Documents/Rcamp2026/test.R`, the working directory for the R script will be `~/Documents/Rcamp2026/`. Same for R markdown files. 
 
 ```{r}
 getwd()
 ```
 
-### 1.2.2 Change the working directory
+### Change the working directory
 
 You can place data files straight into the folder that is your working
 directory, or you can move your working directory to where your data
 files are. You can move your working directory to any folder on your
-computer with the function setwd(). Just give setwd the file path to
+computer with the function `setwd()`. Just give `setwd()` the file path to
 your new working directory. This may be from the root directory
 (starting with / on a Mac), it may include a double-dot (..) to move
 locally up a folder from the current directory, and it may include a
@@ -180,9 +288,12 @@ setwd("/Users/river/Documents/GitHub/RCamp2023/Day2/Lecture")
 If the file path does not begin with your root directory, R will assume
 that it begins at your current working directory.
 
+**CAUTION**
+When you are working on Rmarkdown, `setwd()` only **temporarily** changes working directory for *a code chunk*. If you want to set the working directory for the *whole R markdown document*, include or change `knitr::opts_knit$set(root.dir = '{PATH}')`. However, the best practice is just to create R script / R markdown file on the working directory and do not change it. 
+
 ### 1.2.3 List files in the working directory
 
-You can see what files are in your working directory with list.files().
+You can see what files are in your working directory with `list.files()`.
 If you see the file that you would like to open in your working
 directory, then you are ready to proceed. How you open files in your
 working directory will depend on which type of file you would like to
@@ -192,10 +303,13 @@ open.
 list.files()
 ```
 
-### 1.2.4 Create a new directory
+**tips**
+If you ever worked with UNIX terminal, this reminds you of `ls` command. R do have `ls()` command too, but that command will print out the list of variables. 
 
-To create a directory in R, use the dir.create(path) method. The
-dir.create() method accepts a folder generated in the current working
+### Create a new directory
+
+To create a directory in R, use the `dir.create(path)` method. The
+`dir.create()` method accepts a folder generated in the current working
 directory or specifies a path. Another way is to go to Session > Set Working Directory. 
 
 ```{r eval=FALSE}
@@ -206,10 +320,8 @@ dir.create("./pset2")
 ## \textcolor{red}{In-class exercises 2.1:}
 
 1.  Get your current working directory.
-2.  Create a new directory and name it \*\* R_Camp \*\* .
-3.  Set your working directory to \*\* \~./R_Camp \*\* .
 
-# 2. Loading and Saving Data
+# Loading and Saving Data
 
 In Day 1's lecture, we covered how to build a dataframe by hand-typing
 all the values in each row and column. In this section, we will explore
@@ -217,7 +329,7 @@ the built-in datasets provided by base R. More importantly, we will
 cover how to load data from sources like csv files or excel sheets, and
 how to save the new dataframe that you have made modifications to.
 
-## 2.1 Built-in Datasets
+## Built-in Datasets
 
 R comes with many data sets preloaded in the datasets package, which
 comes with base R. These data sets are not very interesting, but they
@@ -237,8 +349,9 @@ iris
 mtcars
 ```
 
-You can use the summary() function to summarize the dataset. The
-function tells you the minimum, maximum and quartiles for each column.
+You can use `str()` function to view the structure of the data and 
+`summary()` function to summarize the dataset. The
+function tells you the minimum, maximum and quartiles for each numeric column.
 If there are NAs in your dataframe, it also tells you how many NAs there
 are in each column.
 
@@ -252,13 +365,13 @@ data into R from a wide variety of file formats. Before you can load any
 data files into R, you will need to tell R where your working directory
 is.
 
-## 2.2 Loading Data from Sources
+## Loading Data from Sources
 
-### 2.2.1 CSV Files
+### CSV Files
 
 R provides several read functions for you to load data from files, which
 are shortcuts for read.table with different default arguments. The most
-commonly used one is read.csv. You will probably use this function
+commonly used one is `read.csv()`. You will probably use this function
 hundreds of times during our sequence of methods courses here at WashU.
 As suggested by its name, the function read.csv allows you to load in
 comma-separated-variable (CSV) files. For example:
@@ -268,11 +381,11 @@ school_loc <- read.csv("school_loc.csv")
 # remove(school_loc)
 ```
 
-### 2.2.2 HTML Links
+### HTML Links
 
 Many data files are made available on the Internet at their own web
 address. If you are connected to the Internet, you can open these files
-straight into R with read.csv (or other functions based on read.table).
+straight into R with `read.csv()` (or other functions based on `read.table()`).
 You can pass a web address into the file name argument for any of R’s
 data-reading functions. For example:
 
@@ -287,11 +400,12 @@ to a web page that links to the file. Usually, when you visit a data
 file’s web address, the file will begin to download or the raw data will
 appear in your browser window.
 
-### 2.2.3 R Files
+### Native R Data Formats
 
-"R provides two file formats of its own for storing data, .RDS and
-.RData. RDS files can store a single R object, and RData files can store
-multiple R objects."
+R provides two file formats of its own for storing data, `.RDS` and
+`.RData`. These are known to take up smaller spaces than csvs and faster to read and write.
+RDS files can store *a single R object*, and RData files can store
+*multiple R objects*. 
 
 You can open a RDS file with readRDS. For example, if the royal flush
 data was saved as poker.RDS, you could open it with:
@@ -310,9 +424,9 @@ load("stuff.RData")
 ```
 
 There’s no need to assign the output to an object. The R objects in your
-RData file will be loaded into your R session with their original names.
+RData file will be loaded into your R session *with their original names*.
 RData files can contain multiple R objects, so loading one may read in
-multiple objects. load doesn’t tell you how many objects it is reading
+multiple objects. `load()` doesn’t tell you how many objects it is reading
 in, nor what their names are, so it pays to know a little about the
 RData file before you load it.
 
@@ -320,26 +434,26 @@ If worse comes to worst, you can keep an eye on the environment pane in
 RStudio as you load an RData file. It displays all of the objects that
 you have created or loaded during your R session. Another useful trick
 is to put parentheses around your load command like so,
-(load("file.RData")). This will cause R to print out the names of each
+`(load("file.RData"))`. This will cause R to print out the names of each
 object it loads from the file.
 
-Both readRDS and load take a file path as their first argument, just
+Both `readRDS()` and `load()` take a file path as their first argument, just
 like R’s other read and write functions. If your file is in your working
 directory, the file path will be the file name.
 
-## 2.4 Saving Data to Files
+## Saving Data to Files
 
-### 2.4.1 R Files
+### Native R Data Formats 
 
 You can save an R object like a data frame as either an RData file or an
 RDS file. RData files can store multiple R objects at once, but RDS
 files are the better choice because they foster reproducible code.
 
-To save data as an RData object, use the save function. To save data as
-a RDS object, use the saveRDS function. In each case, the first argument
+To save data as an RData object, use `save()` function. To save data as
+a RDS object, use `saveRDS()` function. In each case, the first argument
 should be the name of the R object you wish to save. You should then
 include a file argument that has the file name or file path you want to
-save the data set to.
+save the data set to. Remember to put file extensions!
 
 For example, if you have three R objects, a, b, and c, you could save
 them all in the same RData file and then reload them in another R
@@ -380,9 +494,9 @@ makes them inefficient for sharing. They may also create a problem for
 long-term storage if you don’t think you’ll have a copy of R when you
 reopen the files.
 
-### 2.4.2 CSV Files
+### CSV Files
 
-You can also use write.csv to save your data as a .csv file. The first
+You can also use `write.csv()` to save your data as a .csv file. The first
 argument is the R object that contains your data set. The file argument
 is the file name (including extension) that you wish to give the saved
 data. By default, the function will save your data into your working
@@ -396,14 +510,14 @@ subdirectory named data within your working directory with the command:
 
 ```{r eval = FALSE}
 # write.csv(r_object, file = filepath, row.names = FALSE)
-write.csv(school_loc, "data/school_loc.csv", row.names = FALSE)
+write.csv(school_loc, "./data/school_loc.csv", row.names = FALSE)
 ```
 
-Keep in mind that write.csv cannot create new directories on your
+Keep in mind that `write.csv()` cannot create new directories on your
 computer. Each folder in the file path must exist before you try to save
 a file with it.
 
-The row.names argument prevents R from saving the data frame’s row names
+The `row.names()` argument prevents R from saving the data frame’s row names
 as a column in the plain-text file. You might have noticed that R
 automatically names each row in a data frame with a number.
 
@@ -419,38 +533,40 @@ automatically names each row in a data frame with a number.
 
 ```
 
-# 3. R Notations
+# Data Wrangling Part 1
 
 In Day 1's lecture, we covered how to create a vector, a list, and most
 importantly a data frame. Now we need to know how to manipulate the
 individual values inside your data frame. You can select values within
 an R object with R’s notation system.
 
-## 3.1 Selecting Values
+## Selecting Values
 
 R has a notation system that lets you extract values from R objects. To
 extract a value or set of values from a data frame, write the data
 frame’s name followed by a pair of hard brackets:
 
-"Between the brackets will go two indices separated by a comma. The
+Between the brackets will go two indices separated by a comma. The
 indices tell R which values to return. R will use the first index to
 subset the rows of the data frame and the second index to subset the
-columns."
+columns.
 
 ```{r eval=F}
-View(school_loc)
+# View(school_loc)
 school_loc[ , ]
 
-str(school_loc)
-summary(school_loc)
+# str(school_loc)
+# summary(school_loc)
 
+# First few rows
 head(school_loc)
-# tail(school_loc)
+
+# Last few rows
+tail(school_loc)
 
 # typeof(school_loc)
 # class(school_loc)
 ```
-
 
 You have a choice when it comes to writing indices. There are six
 different ways to write an index for R, and each does something slightly
@@ -460,30 +576,30 @@ look at each of them. You can create indices with: \* Positive integers
 
 The simplest and most commonly used of these is positive integers.
 
-### 3.1.1 Positive integers
+### Positive integers
 
-R treats positive integers just like the ij notation used in linear
-algebra: school_loc[i,j] will return the value of dataframe that is in
+R treats positive integers just like the `ij` notation used in linear
+algebra: `school_loc[i,j]` will return the value of dataframe that is in
 the ith row and the jth column. Notice that i and j only need to be
-integers in the mathematical sense. They can be saved as numerics in R
-(See Day 1's Lecture).
+integers in the mathematical sense. 
 
 ```{r}
 head(school_loc)
+# Extract value at the 1st row and the 2nd column
 school_loc[1,2]
 ```
 
 Notice that the row and column indices for R starts at 1, instead of 0
-in some other programming languages.
+in some other programming languages. This is a more intuitive way of indexing things, but can be confusing if you go back and forth. 
 
-To extract more than one value, use a vector of positive integers. For
+To extract more than one value, use *a vector* of positive integers. For
 example, you can return the first three elements in the first row with:
 
 ```{r}
 school_loc[1, c(1,2,3)]
 ```
 
-R will return the values of school_loc that are in both the first row
+R will return the values of `school_loc` that are in both the first row
 and the first, second, and third columns. Note that R won’t actually
 remove these values from the dataframe. R will give you a new set of
 values which are copies of the original values. You can then save this
@@ -491,13 +607,13 @@ new set to an R object with R’s assignment operator:
 
 ```{r}
 newdf <- school_loc[1, c(1,2,3)]
-newdf = school_loc[1, c(1,2,3)]
+# newdf = school_loc[1, c(1,2,3)] # You can do this, but avoid.
 newdf
 ```
 
 If you repeat a number in your index, R will return the corresponding
 value(s) more than once in your “subset.” This code will return the
-first row of school_loc twice:
+first row of `school_loc` twice:
 
 ```{r}
 school_loc[c(1,1), c(1,2,2,3)]
@@ -510,8 +626,7 @@ vector (which has one dimension) with a single index:
 
 ```{r}
 vec <- c(2,4,6,8,10)
-vec[1:3]
-1:3
+print(vec[1:3])
 ```
 
 If you select two or more columns from a data frame, R will return a new
@@ -519,7 +634,6 @@ data frame:
 
 ```{r}
 school_loc[1:2,1:2]
-
 ```
 
 However, if you select a single column, R will return a vector:
@@ -528,8 +642,8 @@ However, if you select a single column, R will return a vector:
 school_loc[1:2, 1]
 ```
 
-"If you would prefer a data frame instead, you can add the optional
-argument drop = FALSE between the brackets." This method also works for
+If you would prefer a data frame instead, you can add the optional
+argument `drop = FALSE` between the brackets. This method also works for
 selecting a single column from a matrix or an array.
 
 ```{r}
@@ -537,12 +651,12 @@ school_loc[1:2, 1, drop = FALSE]
 # school_loc[1:2, 1, drop = T]
 ```
 
-### 3.1.2 Negative integers
+### Negative integers
 
 Negative integers do the exact opposite of positive integers when
-indexing. R will return every element except the elements in a negative
-index. For example, school_loc[-1, 1:3] will return everything but the
-first row. school_loc[-(2:52), 1:3] will return the first row (and
+indexing. R will return every element *except the elements in a negative
+index*. For example, `school_loc[-1, 1:3]` will return everything but the
+first row. `school_loc[-(2:52), 1:3]` will return the first row (and
 exclude everything else):
 
 ```{r eval=FALSE}
@@ -565,13 +679,13 @@ school_loc[c(-1, 1), 1]
 
 However, you can use both negative and positive integers to subset an
 object if you use them in different indexes (e.g., if you use one in the
-rows index and one in the columns index, like school_loc[-1, 1]).
+rows index and one in the columns index, like `school_loc[-1, 1]`).
 
 ```{r eval=F}
 school_loc[-1, 1, drop=F]
 ```
 
-### 3.1.3 Zero
+### Zero
 
 What would happen if you used zero as an index? Zero is neither a
 positive integer nor a negative integer, but R will still use it to do a
@@ -588,13 +702,12 @@ dim(x) # 0 0
 # class(x)
 # attributes(school_loc)
 # attributes(x)
-
 ```
 
 To be honest, indexing with zero is not very helpful and you will rarely
 need it.
 
-### 3.1.4 Blank spaces
+### Blank spaces
 
 You can use a blank space to tell R to extract every value in a
 dimension. This lets you subset an object on one dimension but not the
@@ -608,12 +721,12 @@ school_loc[1, ]
 school_loc[ ,1, drop=F]
 ```
 
-### 3.1.5 Logical values
+### Logical values
 
-If you supply a vector of TRUEs and FALSEs as your index, R will match
-each TRUE and FALSE to a row in your data frame (or a column depending
+If you supply a vector of `TRUE`s and `FALSE`s as your index, R will match
+each `TRUE` and `FALSE` to a row in your data frame (or a column depending
 on where you place the index). R will then return each row that
-corresponds to a TRUE.
+corresponds to a `TRUE`.
 
 It may help to imagine R reading through the data frame and asking,
 "Should I return the \_i_th row of the data structure?" and then
@@ -628,28 +741,13 @@ dim(school_loc) # [1] 7012   26
 num_cols <- ncol(school_loc) # 26
 head(school_loc)
 school_loc[1, c(TRUE, FALSE, TRUE, rep(FALSE, 23))]
-View(school_loc)
-
+# View(school_loc)
 ```
 
-This system may seem odd—who wants to type so many TRUEs and FALSEs? But
+This system may seem odd—who wants to type so many `TRUE`s and `FALSE`s? But
 it will become very powerful in the next section on modifying values.
 
-It is important to note here that TRUE is equivalent to 1 and FALSE is
-equivalent to 0. You can use the function as.integer() to convert the
-logicals into their corresponding numeric values.
-
-```{r}
-as.integer(TRUE)
-as.integer(FALSE)
-
-as.logical(1)
-as.logical(100)
-as.logical(-1)
-as.logical(0) # notice here only 0 is equivalent to FALSE, all non-zero integers are equivalent to 1
-```
-
-### 3.1.6 Names
+### Names
 
 Finally, you can ask for the elements you want by name—if your object
 has names. This is a common way to extract the columns of a data frame,
@@ -677,7 +775,7 @@ school_loc[1:10,]
 school_loc[c(1:10),]
 ```
 
-## 3.2 Dollar Signs and Double Brackets
+## Dollar Signs and Double Brackets
 
 Two types of object in R obey an optional second system of notation. You
 can extract values from data frames and lists with the \$ syntax. You
@@ -727,12 +825,12 @@ l[1]
 ```
 
 The result is a smaller list with one element. That element is the
-vector c(1, 2). This can be annoying because many R functions do not
-work with lists. For example, sum(l[1]) will return an error. It would
+vector `c(1, 2)`. This can be annoying because many R functions do not
+work with lists. For example, `sum(l[1])` will return an error. It would
 be horrible if once you stored a vector in a list, you could only ever
 get it back as a list:
 
-```{r eval=FALSE n}
+```{r eval=FALSE}
 sum(l[1])
 # Error in sum(l[1]) : invalid 'type' (list) of argument
 ```
@@ -783,7 +881,7 @@ keeps its contents, but those contents are still inside a train car
 (i.e., a list). When you use double brackets, R actually unloads the car
 and gives you back the contents.
 
-# 4. Modifying Values
+# Modifying Values
 
 In this section, you will learn how to change the actual values that are
 stored inside your data frame. This is all adding up to something
@@ -791,7 +889,7 @@ special: complete control of your data. You can now store your data in
 your computer, retrieve individual values at will, and use your computer
 to perform correct calculations with those values.
 
-## 4.1 Changing Values in Place
+## Changing Values in Place
 
 You can use R’s notation system to modify values within an R object.
 First, describe the value (or values) you wish to modify. Then use the
@@ -826,7 +924,7 @@ You can replace multiple values at once as long as the number of new
 values equals the number of selected values:
 
 ```{r}
-vec
+vec <- 1:10
 vec[c(1, 3, 5)] <- c(1000, 3000, 5000)
 vec
 
@@ -858,7 +956,7 @@ Now you can add new variables to your data set:
 colnames(school_loc)
 school_loc$indices <- 1:7012
 colnames(school_loc)
-View(school_loc)
+# View(school_loc)
 ```
 
 You can also remove columns from a data frame (and elements from a list)
@@ -866,7 +964,7 @@ by assigning them the symbol NULL:
 
 ```{r}
 school_loc$newcol <- 0
-View(school_loc)
+# View(school_loc)
 school_loc$newcol <- NULL
 colnames(school_loc)
 ```
@@ -898,10 +996,10 @@ matrix, list, or data frame. Just describe the values that you want to
 change with R’s notation system, then assign over those values with R’s
 assignment operator.
 
-## 4.2 Logical Subsetting
+## Logical Subsetting
 
 Do you remember R’s logical index system, logicals? To recap, you can
-select values with a vector of TRUEs and FALSEs. The vector must be the
+select values with a vector of `TRUE`s and `FALSE`s. The vector must be the
 same length as the dimension that you wish to subset. R will return
 every element that matches a TRUE: 
 
@@ -912,10 +1010,10 @@ vec2[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, TRUE)] # filter
 ```
 
 At first glance, this system might seem impractical. Who wants to type
-out long vectors of TRUEs and FALSEs? No one. But you don’t have to. You
-can let a logical test create a vector of TRUEs and FALSEs for you.
+out long vectors of `TRUE`s and `FALSE`s? No one. But you don’t have to. You
+can let a logical test create a vector of `TRUE`s and `FALSE`s for you.
 
-### 4.2.1 Logical Tests
+### Logical Tests
 
 A logical test is a comparison like “is one less than two?”, 1 \< 2, or
 “is three greater than four?”, 3 \> 4. R provides seven logical
@@ -935,11 +1033,11 @@ c(1, 2, 3) == c(3, 2, 1)
 
 ```
 
-%in% is the only operator that does 'not' do normal element-wise
-execution. %in% tests whether the value(s) on the left side are in the
+`%in%` is the only operator that does 'not' do normal element-wise
+execution. `%in%` tests whether the value(s) on the left side are in the
 vector on the right side. If you provide a vector on the left side, %in%
 will not pair up the values on the left with the values on the right and
-then do element-wise tests. Instead, %in% will independently test
+then do element-wise tests. Instead, `%in%` will independently test
 whether each value on the left is somewhere in the vector on the right:
 
 ```{r}
@@ -957,12 +1055,12 @@ c(1, 2, 3, 4) %in% c(3, 4, 5)
 "a" %in% c("abc") # %in% checks exact matches
 ```
 
-Notice that you test for equality with a double equals sign, ==, and not
-a single equals sign, =, which is another way to write the assignment
-operator \<-. It is easy to forget and use a = b to test if a equals b.
-Unfortunately, you’ll be in for a nasty surprise. R won’t return a TRUE
-or FALSE, because it won’t have to: a will equal b, because you just ran
-the equivalent of a \<- b where you manually set the value of a to be b.
+Notice that you test for equality with a double equals sign, `==`, and not
+a single equals sign, `=`, which is another way to write the assignment
+operator \<-. It is easy to forget and use `a = b` to test if a equals b.
+Unfortunately, you’ll be in for a nasty surprise. R won’t return a `TRUE`
+or `FALSE`, because it won’t have to: a will equal b, because you just ran
+the equivalent of `a <- b` where you manually set the value of a to be b.
 
 You can compare any two R objects with a logical operator; however,
 logical operators make the most sense if you compare two objects of the
@@ -989,7 +1087,7 @@ school_loc$Y[school_loc$X < -100]
 
 # What does this do?
 school_loc$Y[school_loc$X < -100] <- 0
-View(school_loc)
+# View(school_loc)
 
 ```
 
@@ -1032,14 +1130,14 @@ TFR <- read.csv("dataset.csv")
 sum(TFR$TFR > 8)
 nrow(TFR[TFR$TFR > 8,])
 typeof(TFR[TFR$TFR > 8,])
-TFR[TFR$TFR >8]
+TFR[TFR$TFR >8, ]
 typeof(TFR$TFR > 8)
 nrow(TFR[TFR$TFR > 8,])
 ```
 
-### 4.2.2 Boolean Operators
+### Boolean Operators
 
-Boolean operators are things like and (&) and or (\|). They "collapse the
+Boolean operators are things like and (`&`) and or (`|`). They "collapse the
 results of multiple logical tests into a single TRUE or FALSE". R has six
 boolean operators.
 
@@ -1115,7 +1213,7 @@ data$LifeExpB[c(F,F,F,T)] <- 0
 
 ```
 
-## 4.3 Missing Information (NA)
+## Missing Information (NA)
 
 Missing information problems happen frequently in data science. Usually,
 they are more straightforward: you don’t know a value because the
@@ -1148,7 +1246,7 @@ equal to one,” that is, NA. Generally, NAs will propagate whenever you
 use them in an R operation or function. This can save you from making
 errors based on missing data.
 
-### 4.3.1 na.rm
+### Inside functions: `na.rm` argument
 
 Missing values can help you work around holes in your data sets, but
 they can also create some frustrating problems. Suppose, for example,
@@ -1162,16 +1260,16 @@ mean(c(NA, 1:50))
 ```
 
 Understandably, you may prefer a different behavior. Most R functions
-come with the optional argument, na.rm, which stands for NA remove. R
+come with the optional argument, `na.rm`, which stands for NA remove. R
 will ignore NAs when it evaluates a function if you add the argument
-na.rm = TRUE:
+`na.rm = TRUE`:
 
 ```{r}
 mean(c(NA, 1:50), na.rm = TRUE)
 mean(c(1:50)) # which returns the same value as above
 ```
 
-### 4.3.2 is.na
+### Test for NA: `is.na()`
 
 On occasion, you may want to identify the NAs in your data set with a
 logical test, but that too creates a problem. How would you go about it?
@@ -1189,7 +1287,7 @@ c(1, 2, 3, NA) == NA
 ```
 
 But don’t worry too hard; R supplies a special function that can test
-whether a value is an NA. The function is sensibly named is.na:
+whether a value is an NA. The function is sensibly named `is.na()`:
 
 ```{r}
 is.na(NA)
@@ -1200,13 +1298,13 @@ is.na(vec3)
 ```{r}
 # What does this do?
 school_loc$Y[school_loc$X < -100] <- NA
-View(school_loc)
+# View(school_loc)
 ```
 
-### 4.3.2 na.omit
+### Omit the Entire Rows: `na.omit()`
 
-You can also remove all observations containing NA's in any column by
-using the na.omit() function. For example,
+You can also remove all rows containing NA's in any column by
+using the `na.omit()` function. For example,
 
 ```{r eval=FALSE}
 dim(school_loc)
@@ -1243,5 +1341,5 @@ X
 
 ```{r}
 TFR3 <- TFR[!is.na(TFR$GDPpc), ]
-View(TFR3)
+# View(TFR3)
 ```

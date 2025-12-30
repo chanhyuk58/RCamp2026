@@ -1,7 +1,6 @@
 ---
 title: "Day2 Problem Set"
 author: "Cecilia Sui"
-date: "1/11/2022"
 output: pdf_document
 ---
 

@@ -1,10 +1,11 @@
-# RCamp2025
+# RCamp2026
 
 Five day R crash course
 
+Forked from Soyeon at her repo [here](https://github.com/rever-jeon/RCamp2025),
 Forked from Peter at his repo [here](https://github.com/peterjbachman/RCamp2023),
 which is from Cecilia Sui at her repo [here](https://github.com/CeciliaYSui/RCamp2022),
-updated in 2024 by Soyeon
+updated in 2026 by Chanhyuk Park
 
 More about Git and Github:
 
