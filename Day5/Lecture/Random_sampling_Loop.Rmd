@@ -166,7 +166,7 @@ whenever you call it. You can make such an object by writing your own **R
 function** which we will cover in the following section.
 
 
-## \textcolor{red}{In-class exercises 3.1:}
+## \textcolor{red}{In-class exercises:}
 
 1. Sample with replacement from 1 to 1000 inclusive of size 20.
 ```{r}
@@ -450,7 +450,7 @@ program in R, you will be able to create new, customized, reproducible tools for
 yourself whenever you like.
 
 
-## \textcolor{red}{In-class exercises 3.2:}
+## \textcolor{red}{In-class exercises:}
 
 1. Write a function called func_square() that takes one argument of type integer
    and returns the square of the number.
@@ -833,7 +833,7 @@ while (i <= length(vec)) {
 
 
 
-## \textcolor{red}{In-class exercises 3.3:}
+## \textcolor{red}{In-class exercises:}
 
 1. Write a function that samples with replacement from a given range with a
    given size. The user should also be able to choose whether to do sampling

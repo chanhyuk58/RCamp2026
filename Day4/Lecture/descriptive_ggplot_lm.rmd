@@ -295,7 +295,7 @@ g1 <- ggplot(data, aes(x=UrbanPop, y=Assault)) +
 ggsave("myplot.pdf", plot = g1) 
 ```
 
-## \textcolor{red}{In-class exercises 5.3:}
+## \textcolor{red}{In-class exercises:}
 
 1. Omit all NA's from worldTFR.
 ```{r}
