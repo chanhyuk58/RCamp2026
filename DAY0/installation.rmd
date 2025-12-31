@@ -1,0 +1,74 @@
+---
+title: "R Installation Guide"
+author: "Cecilia Sui and all other TAs"
+date: "`r format(Sys.time(), '%m/%d/%y')`"
+output:
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+# Installation
+
+## Installing R
+
+<p>
+![The R Project for Statistical Computing](./pics/Install1.png){width=70%}
+</p>
+
+<p>
+![CRAN Mirrors](./pics/Install2.png){width=70%}
+</p>
+<p>
+![Choose your OS](./pics/Install3.png){width=70%}
+</p>
+<p>
+![macOS download](./pics/Install4.png){width=70%}
+</p>
+<p>
+![Windows download](./pics/Install5.png){width=70%}
+</p>
+
+Just follow the standard installation instructions and you should be good!
+If you are on a Linux computer, you are probably already super familiar with what you need to do here.
+
+\vspace{.5cm}
+
+
+
+
+## Installing RStudio (IDE) 
+
+- R Studio makes using R a lot easier! 
+- They are now under the bigger association POSIT
+
+<p>
+![RStudio download page](./pics/Install6.png){width=70%}
+</p>
+<p>
+![Download RStudio Desktop (free version)](./pics/Install7.png){width=70%}
+</p>
+<p>
+![Choose the one for your OS](./pics/Install8.png){width=70%}
+</p>
+
+
+R offers a help() function that you can use when you encounter
+unfamiliar operators, functions, pacakges, etc. You can also use the shortcut
+"?" symbol to do the same.
+
+```{r}
+help("%*%") # special characters 
+?mean # alphanumeric
+help("+")
+```
+
+
+## \textcolor{red}{In-class exercises:}
+
+1. Install the latest version of R on your computer. https://www.r-project.org/
+2. Install RStudio. https://www.rstudio.com/products/rstudio/download/
+3. Create your first R script, and name it *my_script.r* . 
+
+
+\vspace{.5cm}

@@ -1,0 +1,434 @@
+---
+title: "Descriptive Statistic, ggplot2, and a Little Bit of LM"
+author: "Cecilia Y. Sui, and all other TAs"
+output: 
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options)) # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "..."
+  if (length(lines) == 1) { # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
+```
+
+# Descriptive Statistics
+
+## Name Commands 
+* names() – It works on matrix or data frame objects.
+```{r}
+# Load the data
+worldTFR <- read.csv("./worldTFR.csv")
+
+names(worldTFR)
+```
+
+* rownames() – It works on matrix or data frame objects and is used to give
+  names to rows.
+```{r output.lines = 10}
+rownames(worldTFR)
+```
+
+* colnames() – It works on matrix or data frame objects and is used to give
+  names to columns.
+```{r}
+colnames(worldTFR)
+```
+
+* dimnames() – Gets row and column names for matrix or data frame objects, that
+  is, it is used to see dimensions of the data frame.
+```{r output.lines=5}
+dimnames(worldTFR)[2]
+dim(worldTFR)
+```
+
+```{r output.lines=10}
+dimnames(worldTFR)[2]
+```
+
+## Summarizing Commands 
+
+* max(x, na.rm = FALSE) – It shows the maximum value. By default, NA values are
+  not removed. NA is considered the largest unless na.rm=true is used.
+* min(x, na.rm = FALSE) – Shows minimum value in a vector. If there are na
+  values, NA is returned unless na.rm=true is used.
+* length(x) – Gives length of the vector and includes na values.
+  Na.rm=instruction does not work with this command.
+* sum(x, na.rm = FALSE) – Shows the sum of the vector elements.
+* mean(x, na.rm = FALSE) – We obtain an arithmetic mean with this.
+* median( x, na.rm = FALSE) – Shows the median value of the vector.
+* sd(x, na.rm = FALSE) – Shows the standard deviation.
+* var(x, na.rm = FALSE) – Shows the variance.
+
+* mad(x, na.rm = FALSE) – Shows the median absolute deviation.
+This first finds the median of the data set, then computes the absolute differences between each data point and the median, and finally takes the median of these absolute differences.
+* log(dataset) – Shows log value for each element.
+* summary(dataset) – We have seen how it shows a summary of dataset like maximum
+  value, minimum value, mean, etc.
+* quantile() – Shows the quantiles by default—the 0%, 25%, 50%, 75%, and 100%
+  quantiles. You can select other quantiles also.
+```{r}
+x <- sample(1:100000, 2000)
+quantile(x, probs = seq(0, 1, 0.1), na.rm = FALSE, names = TRUE)
+?quantile
+```
+
+## Histograms and Scatter Plots
+
+One helpful graph in describing the data is histograms. R provides a very quick function to draw histogram: `hist()`
+
+```{r}
+hist(worldTFR$GDPpc)
+```
+
+As we have seen in 
+
+## \textcolor{red}{In-class exercises:}
+
+We will continue using the worldTFR dataset.
+
+1. Load the dataset and omit all NA's in the dataframe. 
+4. What are the column names and row names? 
+5. What is the max and min of Years? 
+6. What is the average Life Expectancy at Birth (LifeExpB)?
+7. What is the median Life Expectancy at Birth (LifeExpB)?
+8. What is the 25% and 75% quantile of Life Expectancy at Birth (LifeExpB)?
+
+# Introduction to ggplot2
+
+`ggplot2` is a powerful visualization package and is one of the areas where R truly shines. It is so highly regarded that many researchers use `ggplot2` to create publication-quality figures even if they perform their primary data analysis in other languages like Python. As a core component of the `tidyverse`(an ecosystem of packages that includes `dplyr`), `ggplot2` shares a consistent design philosophy. This creates a natural synergy between the two, allowing them to work together seamlessly in a single, fluid workflow.
+
+We need to first install and load the package. 
+```{r}
+# install.packages("ggplot2")
+library(ggplot2)
+```
+
+## How to Make a Simple Scatterplot 
+
+```{r}
+data = USArrests # built-in dataset 
+head(USArrests)
+# ?USArrests
+
+ggplot(data, aes(x = UrbanPop, y = Assault)) + geom_point()
+
+# sort of equivalent to doing this with the base R plot 
+plot(data$UrbanPop, data$Assault)
+```
+
+We got a basic scatterplot, where each point represents a US state. However, it
+lacks some basic components such as the plot title, meaningful axis labels, etc.
+
+As mentioned, we can chain `ggplot` with `dplyr`:
+```{r}
+library(dplyr)
+
+USArrests %>%
+  group_by(row.names(USArrests)) %>%
+  filter(Murder < 9) %>%
+  ggplot() + 
+  geom_point(aes(x = UrbanPop, y = Rape)) +
+  theme_minimal()
+```
+
+
+Like `geom_point()`, there are many such geom layers to use for visualization. For
+now, let’s just add a smoothing layer using **geom_smooth(method = 'lm')**.
+Since the method is set as lm (short for linear model), it draws the line of
+best fit. The line of best fit is in blue by default. The shaded area is the
+confidence intervals.
+```{r}
+ggplot(data, aes(x=UrbanPop, y=Assault)) + 
+  geom_point() + 
+  geom_smooth(method="lm", se = TRUE) 
+```
+
+## Histograms with `ggplot`
+
+We can use `geom_histogram`.
+```{r}
+ggplot(data = worldTFR) + 
+  geom_histogram(aes(GDPpc))
+```
+
+
+## Adjusting the X and Y Axis Limits
+
+We can delete the points outside our range. This will change the lines of best
+fit or smoothing lines as compared to the original data. This can be done by
+**xlim()** and **ylim()**. You can pass a numeric vector of length 2 (with min
+and max values) or just the max and min values itself.
+
+```{r}
+ggplot(data, aes(x=UrbanPop, y=Assault)) + 
+  geom_point() + 
+  geom_smooth(method="lm")  + 
+  xlim(c(40, 80)) + ylim(c(0, 350))   # deletes points
+```
+
+## Change the Title and Axis Labels
+
+```{r}
+ggplot(data, aes(x=UrbanPop, y=Assault)) + 
+  geom_point() + 
+  geom_smooth(method="lm") +
+  xlim(c(30, 90)) + ylim(c(0, 350)) +
+  labs(title="Urban Population VS Assault", 
+         subtitle="Using the built-in dataset USArrests", 
+       y="Assault", x="Urban Population") # adding labels here 
+```
+
+You can also get the same plot by adding the labels using an alternative way:
+```{r}
+ggplot(data, aes(x=UrbanPop, y=Assault)) + 
+  geom_point() + 
+  geom_smooth(method="lm") +
+  xlim(c(30, 90)) + ylim(c(0, 350)) +
+  ggtitle("Urban Population Vs Assault", 
+            subtitle="Using the built-in dataset USArrests") + 
+  xlab("Urban Population") + 
+  ylab("Assault")
+```
+
+## Change the Color and Size of Points
+
+We can change the aesthetics of a geom layer by modifying the respective
+**geoms**. Let’s change the color of the points and the line to a static value.
+R has a limited number of colors to use by their name, such as red, blue,
+yellow, etc. But you can always use html color codes to make your plots more
+colorful!
+
+```{r}
+ggplot(data, aes(x=UrbanPop, y=Assault)) + 
+  geom_smooth(method="lm",  col="#D35FB7") + # change the color of line 
+  xlim(c(30, 90)) + ylim(c(0, 350)) +
+  labs(title="Urban Population VS Assault", 
+         subtitle="Using the built-in dataset USArrests", 
+       y="Assault", x="Urban Population") +
+  geom_point(col="pink", size=2) # Set static color and size for points
+```
+
+**ggplot2** is a very powerful package for visualizing your data. 
+
+If you would like to learn more about what it is capable to do, check out this
+website:
+
+http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html
+
+## Saving your plot
+
+**ggsave()** is a convenient function for saving a plot.
+
+It defaults to saving the last plot that you displayed, using the size of the
+current graphics device. It also guesses the type of graphics device from the
+extension.
+
+It has many different arguments that you can customize. We will not cover how to
+use each argument, but you can learn more about them in the documentation for
+ggplot.
+```{r eval=FALSE}
+# The following code chunk is not executable. 
+ggsave(
+  filename,
+  plot = last_plot(),
+  device = NULL,
+  path = NULL,
+  scale = 1,
+  width = NA,
+  height = NA,
+  units = c("in", "cm", "mm", "px"),
+  dpi = 300,
+  limitsize = TRUE,
+  bg = NULL,
+  ...
+)
+```
+
+For example, you can save the plot above like this:
+
+```{r eval = FALSE}
+ggplot(data, aes(x=UrbanPop, y=Assault)) + 
+  geom_point() + 
+  geom_smooth(method="lm",  col="skyblue") +
+  xlim(c(30, 90)) + ylim(c(0, 350)) +
+  labs(title="Urban Population VS Assault", 
+         subtitle="Using the built-in dataset USArrests", 
+       y="Assault", x="Urban Population") +
+  geom_point(col="pink", size=3)
+
+ggsave("myplot.png")
+```
+
+When having multiple plots, you can also save your plots to objects and then
+export to images. For example:
+```{r eval = F}
+g1 <- ggplot(data, aes(x=UrbanPop, y=Assault)) + 
+          geom_point() + 
+          geom_smooth(method="lm",  col="skyblue") +
+          xlim(c(30, 90)) + ylim(c(0, 350)) +
+          labs(title="Urban Population VS Assault", 
+                 subtitle="Using the built-in dataset USArrests", 
+               y="Assault", x="Urban Population") +
+          geom_point(col="pink", size=3)
+
+ggsave("myplot.pdf", plot = g1) 
+```
+
+## \textcolor{red}{In-class exercises 5.3:}
+
+1. Omit all NA's from worldTFR.
+```{r}
+df <- na.omit(worldTFR)
+
+```
+
+2. Make a plot where the horizontal axis is LifeExpB and vertical axis is TFR.
+```{r}
+ggplot(df, aes(x = LifeExpB, y = TFR)) + geom_point(col = "skyblue", size = 0.5)
+```
+
+3. Set the color to red, and size for points as 0.5
+```{r}
+ggplot(df, aes(x = LifeExpB, y = TFR)) + geom_point(col = "red", size = 0.5)
+```
+
+4. Add appropriate label for the axis and the plot. 
+```{r}
+ggplot(df, aes(x = LifeExpB, y = TFR)) + 
+  geom_point(col = "red", size = 0.5) +
+  labs(title="Relationship between TFR and LifeExpB", 
+       y="Total Fertility Rate", x="Life Expectancy at Birth")
+```
+
+5. Create a new directory named plots, and save your plot as TFR.png into plots.
+
+```{r}
+dir.create("plots")
+ggsave("TFR.png")
+```
+
+\newpage
+
+# Simple Linear Regression
+
+Foundations for linear regressions will be covered more in QPM 1. Here I want to briefly touch on how we can run `lm()` function. The `lm()` function mainly takes two arguments: `formula` and `data`. 
+
+## `lm()`
+`formula` has a form `y ~ x1 + x2` where `y` denotes the dependent variable and `x` denotes independent variable(s). `~` works like an equal sign. For interaction term, we can use `*` and `:`. `:` will add the interaction term only, but `*` will automatically add all main terms. Since it is advised to always include main terms in interaction analysis, I would stick to `*` without special reasons. 
+
+As always, we can store the result from `lm()` function as an object. `summary()` function will show the summary of the regression result in a readable way.
+
+```{r}
+
+# Bivariate
+model1 <- lm(formula = LifeExpB ~ Pop1564Female, data = worldTFR)
+summary(model1)
+
+# Multivariate
+model2 <- lm(formula = LifeExpB ~ Pop1564Female + InfMRateUN, data = worldTFR)
+summary(model2)
+
+# Interaction
+model3 <- lm(formula = LifeExpB ~ Pop1564Female*InfMRateUN, data = worldTFR)
+summary(model3)
+```
+
+### Robust Standard Errors
+
+Robust standard errors are not the default. So we need another package called `sandwich` and `lmtest`. `sandwich` provides functions to calculate robust SE and `lmtest` provides functions to redisplay regression results with the new SE.
+
+```{r}
+library(sandwich)
+library(lmtest)
+
+# Robust standard errors with lm()
+model1_robust <- coeftest(model1, 
+                          vcov = vcovHC)
+
+print(model1_robust) # summary may not work here since the result is contained in a different object.
+
+# Clustered robust standard errors with lm()
+model1_robust_clustered <- coeftest(model1,
+                                    vcov = vcovCL,
+                                    type = "HC1",
+                                    cluster = ~Country)
+
+print(model1_robust_clustered) # summary may not work here since the result is contained in a different object.
+```
+
+## Visual Diagnosis of Linear Model
+`plot()` function provides a quick way to visually check Gauss-Markov assumptions and outliers / high leverage points. These will be covered in more detail in QPM 1. 
+```{r}
+plot(model1, which = 1) # Residuals and Fitted values
+plot(model1, which = 2) # Q-Q plot
+plot(model1, which = 3) # Standardized Residuals and Fitted values
+plot(model1, which = 4) # Cook's distance
+plot(model1, which = 5) # Residuals and Leverages
+plot(model1, which = 6) # Cook's distance and Leverages
+```
+
+## Summarize Regression Outputs with `modelsummary`
+
+`modelsummary::modelsummary()` provides some easy ways to convert the regression model outputs into other formats such as latex and docx. 
+
+```{r}
+library(modelsummary)
+library(ggplot2)
+```
+
+```{r eval=FALSE}
+# By default as markdown table
+modelsummary(model3)
+
+# Latex
+modelsummary(model3, output="latex") # or you can provide output file name such as model3.tex
+
+# HTML
+modelsummary(model3, output="html") # or you can provide output file name such as model3.html
+
+# Multiple models as list
+modelsummary(list(model1, model2, model3)) 
+```
+
+## Visualizing Regression Outputs with `modelsummary`
+
+`modelsummary` package also provides easy and beautiful ways to plot regression outputs. We will explore very basics of `modelplot()` function today. By default, it gives a nice coefficient plot in a `ggplot` object. We can then edit it just like any other `ggplot` object!
+
+
+```{r}
+modelplot(model1) +
+  labs(title = "Coefficient Plot for Model1") + 
+  aes(color = ifelse(p.value < 0.001, "Significant", "Not significant")) +
+  scale_color_manual(values = c("grey", "black"))
+```
+
+`modelsummary` package has more useful features that cannot be touched in this course. Check more details here! [modelsummary documentation](https://modelsummary.com/vignettes/modelsummary.html) 
+
+## \textcolor{red}{In-class exercises:}
+
+We will continue using the worldTFR dataset.
+
+1. Run a simple linear regression where: `GDPpc` as an outcome and `MtoFbirth`, `Pop1564`, and `LifeExpB` as predictors. 
+2. Get robust SE for the model.
+3. Summarize the model in tables and figures using `modelsummary`. 
