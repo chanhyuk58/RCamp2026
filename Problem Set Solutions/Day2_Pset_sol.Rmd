@@ -147,12 +147,3 @@ r3[r3$oil == max(r3$oil),]
 ```{r eval = FALSE}
 write.csv(resources, "data/new_resources.csv", row.names = FALSE)
 ```
-
-
-
-
-
-
-
-
-

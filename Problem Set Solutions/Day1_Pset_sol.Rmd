@@ -1,7 +1,6 @@
 ---
 title: "Day 1 Exercises"
-author: "Cecilia Sui"
-date: "01/10/2022"
+author: "Cecilia Sui, and other TAs"
 output: pdf_document
 ---
 

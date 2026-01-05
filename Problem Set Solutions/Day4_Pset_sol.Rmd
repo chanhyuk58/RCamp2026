@@ -1,5 +1,5 @@
 ---
-title: "Day4 Problem Set"
+title: "Day4 Problem Set Solutions"
 author: "Cecilia Sui"
 date: "1/13/2022"
 output: pdf_document
@@ -11,74 +11,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Day 4 Outline:
-1. Types of Statistical Data (numerical, categorical, ordinal)
-2. Probability distributions: rnorm / dnorm / pnorm / qnorm
-3. Descriptive Statistics
+1. Descriptive Statistics
+2. Introduction to `ggplot`
+3. Simple linear regression
 
 
-# Probability Distributions
-
-1. Suppose the height of males at a certain school is normally distributed with
-   a mean of $\mu=168$ cm and a standard deviation of $\sigma = 9$ cm.
-   Approximately what percentage of males at this school are **taller** than 175
-   cm?
-```{r}
-pnorm(175, mean = 168, sd = 9, lower.tail = FALSE)
-```
-
-2. Suppose the weight of a certain species of dogs is normally distributed with
-   a mean of $\mu=33$ lbs and a standard deviation of $\sigma = 5.5$ lbs.
-   Approximately what percentage of this species of otters weight less than 28
-   lbs?
-```{r}
-pnorm(28, mean = 33, sd = 5.5, lower.tail = TRUE)
-```
-
-3. Suppose the height of flowers in a certain region is normally distributed
-   with a mean of $\mu=24$ cm and a standard deviation of $\sigma= 5$ cm.
-   Approximately what percentage of flowers in this region are **between 18 and
-   25 cm** tall?
-```{r}
-pnorm(25, mean = 24, sd = 5) - pnorm(18, mean = 24, sd = 5)
-```
-
-4. Find the Z-score of the 99th quantile of the standard normal distribution.
-```{r}
-qnorm(0.99)
-```
-
-5. Find the Z-score of the 95th quantile of the standard normal distribution.
-```{r}
-qnorm(0.95)
-```
-
-6. Generate a vector of 5 normally distributed random variables with mean = 10
-   and sd = 2
-```{r}
-set.seed(12345)
-rnorm(5, mean = 10, sd = 2)
-```
-7. Generate a vector of 100 normally distributed random variables with mean = 50
-   and sd = 5
-```{r}
-rnorm(1000, mean = 50, sd = 5)
-```
-
-8. Generate a vector of 1000 normally distributed random variables with mean =
-   50 and sd = 25
-```{r}
-rnorm(1000, mean = 50, sd = 25)
-```
-9. Generate two histograms using the **hist()** function to view these two
-   distributions.
-```{r}
-hist(rnorm(100, mean = 50, sd = 25))
-hist(rnorm(1000, mean = 50, sd = 25))
-```
-
-
-\newpage
-# Descriptive Statistics
+# Descriptive Statistics and Simple linear regression
 
 This section touches on how to run linear regression briefly. Don't worry if you
 do not understand the meaning of every item in your summary table for your
@@ -110,11 +48,10 @@ plot(df$perAA, df$perGore)
 3. Let’s run a linear regression with undercount as the response and perAA as
    the predictor. (Please refer back to the lecture notes for the example we
    did.) Summarize the regression results and describe what you see. Can you get
-   the coefficients? Use **plot()** to visualize undercount and perAA.
+   the coefficients? 
 ```{r}
 lm_3 <- lm(undercount ~ df$perAA, data = df)
 summary(lm_3)
-plot(df$undercount, df$perAA)
 ```
 4. Run a linear regression with undercount as the response variable and both
    perGore and perAA as predictors. Summarize the results and describe what has
@@ -123,3 +60,67 @@ plot(df$undercount, df$perAA)
 lm_4 <- lm(undercount ~ perAA + perGore, data = df)
 summary(lm_4)
 ```
+
+5. Use one of the previous linear regression object. Run visual diagnosis using `plot()` function.
+```{r}
+plot(lm_3, which = 1)
+plot(lm_3, which = 2)
+plot(lm_3, which = 3)
+plot(lm_3, which = 4)
+plot(lm_3, which = 5)
+plot(lm_3, which = 6)
+```
+
+# ggplot2 Basics 
+
+1. Find all the variables that negatively correlates with TFR from the
+   **worldTFR** dataset. Can you offer a reasoning of the relationships?
+```{r, eval=FALSE}
+tfr <- read.csv("/Users/river/Documents/GitHub/RCamp2023/Day5/Lecture/worldTFR.csv") %>%
+    na.omit()
+
+# In the lm() function, if you put a . after the ~ the function
+# assumes to use all other columns
+lmTFR <- lm(TFR ~ ., data = tfr)
+
+# Values with a negative coefficient here will have some sort of negative
+# correlation with TFR
+summary(lmTFR)
+```
+
+2. Pick two variables from Q1 and use the package ggplot2 to plot them and TFR
+   separately, where the two variables you choose should be on your x-axis, and
+   TFR should be on the y-axis. Add appropriate labels. Compare the two plots
+   and explain the differences.
+```{r}
+tfr <- read.csv("/Users/river/Documents/GitHub/RCamp2023/Day5/Lecture/worldTFR.csv") %>%
+  na.omit()
+
+ggplot(tfr, aes(x = LifeExpB, y = TFR)) +
+  geom_smooth(method = "lm") +
+  geom_point() +
+  labs(y = "Total Fertility Rate", x = "Life Expectancy")
+
+ggplot(tfr, aes(x = Pop1564Female, y = TFR)) +
+  # geom_smooth(method = "lm") +
+  geom_point() +
+  labs(y = "Total Fertility Rate", x = "Pop1564Female")
+```
+
+
+3. Create a new dataframe named df1, such that the dataframe has two columns:
+   Year and avg_TFR. The column Year should list the years with no duplicates,
+   and the column TFR should store the average TFR of all countries during that
+   specific year. Use the package ggplot2 to visualize the relationship between
+   Year and avg_TFR. Describe what you see.
+```{r}
+df1 <- tfr %>%
+  group_by(Year) %>%
+  summarise(avg_TFR = mean(TFR, na.rm = TRUE))
+
+ggplot(df1, aes(x = Year, y = avg_TFR)) +
+  # geom_smooth(method = "lm") +
+  geom_point() +
+  labs(y = "Total Fertility Rate", x = "Years")
+```
+

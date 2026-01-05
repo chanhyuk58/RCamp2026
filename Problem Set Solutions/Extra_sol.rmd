@@ -1,0 +1,66 @@
+---
+title: "Probability Solutions"
+modified: 
+output: 
+  pdf_document: default
+---
+
+# Probability Distributions
+
+1. Suppose the height of males at a certain school is normally distributed with
+   a mean of $\mu=168$ cm and a standard deviation of $\sigma = 9$ cm.
+   Approximately what percentage of males at this school are **taller** than 175
+   cm?
+```{r}
+pnorm(175, mean = 168, sd = 9, lower.tail = FALSE)
+```
+
+2. Suppose the weight of a certain species of dogs is normally distributed with
+   a mean of $\mu=33$ lbs and a standard deviation of $\sigma = 5.5$ lbs.
+   Approximately what percentage of this species of otters weight less than 28
+   lbs?
+```{r}
+pnorm(28, mean = 33, sd = 5.5, lower.tail = TRUE)
+```
+
+3. Suppose the height of flowers in a certain region is normally distributed
+   with a mean of $\mu=24$ cm and a standard deviation of $\sigma= 5$ cm.
+   Approximately what percentage of flowers in this region are **between 18 and
+   25 cm** tall?
+```{r}
+pnorm(25, mean = 24, sd = 5) - pnorm(18, mean = 24, sd = 5)
+```
+
+4. Find the Z-score of the 99th quantile of the standard normal distribution.
+```{r}
+qnorm(0.99)
+```
+
+5. Find the Z-score of the 95th quantile of the standard normal distribution.
+```{r}
+qnorm(0.95)
+```
+
+6. Generate a vector of 5 normally distributed random variables with mean = 10
+   and sd = 2
+```{r}
+set.seed(12345)
+rnorm(5, mean = 10, sd = 2)
+```
+7. Generate a vector of 100 normally distributed random variables with mean = 50
+   and sd = 5
+```{r}
+rnorm(1000, mean = 50, sd = 5)
+```
+
+8. Generate a vector of 1000 normally distributed random variables with mean =
+   50 and sd = 25
+```{r}
+rnorm(1000, mean = 50, sd = 25)
+```
+9. Generate two histograms using the **hist()** function to view these two
+   distributions.
+```{r}
+hist(rnorm(100, mean = 50, sd = 25))
+hist(rnorm(1000, mean = 50, sd = 25))
+```
