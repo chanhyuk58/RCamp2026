@@ -547,7 +547,7 @@ args(floor)
 ```
 
 # Function Arguments
-- Functions may have default values: `digis=0`
+- Functions may have default values: `digits=0`
 - For example,
 ```{r n}
 round(3.1415)
@@ -555,7 +555,7 @@ round(3.1415, digits = 2)
 ```
 
 # Function Arguments
-- If arguments names are not provided, R follows it
+- If arguments names are provided, R follows it
 - If arguments names are not specified, R uses default order
 
 ```{r}
