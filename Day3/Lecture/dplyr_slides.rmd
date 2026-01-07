@@ -34,7 +34,7 @@ install.packages(c("ggplot2", "data.table", "dplyr"))
 # Loading Packages 
 - To actually use the packages, we have to **load** them first
 - `library()`
-- Every new R session -> Fresh -> Have to load packages again
+- Every new R session -> Only Base R -> Have to load packages again
 - Goes at the top
 - Quotation marks are optional for `library()`, but personally I use them every time
 - Load everything in the package
@@ -136,7 +136,7 @@ data <- original %>%
 # Filter rows with `filter()`
 
 - `filter(data, index / conditions)` subset rows 
-- For example, we can select all rows with STATE as Missouri:
+- For example, we can select all rows with Year is 1950:
 
 ```{r message=F}
 library("dplyr")
@@ -233,10 +233,10 @@ worldTFR.na %>%
 
 # Select all columns except some
 
-Select all columns except those from NAME to STATE
+Select all columns except those from Year to LifeExpB
 ```{r eval=F}
 worldTFR.na %>% 
-  select(!(NAME:STATE))
+  select(!(Year:LifeExpB))
 ```
 
 # Select columns with an expression
@@ -319,7 +319,7 @@ output:
 
 # Markdown part
 
-- `knitr` uses `pandoc` in as its backend
+- `knitr` uses `pandoc` as its backend
 - pandoc markdown style will mostly be respected
 
 - Headings
@@ -416,4 +416,4 @@ plot(1:100, sample(1:10000, 100))
 ![name of your image](path-to-image-here)
 ````
 
-![Sunni is Here!](./sunni.jpeg){width=80%}
+![Sunni is Here!](./sunni.jpeg){width=60%}
