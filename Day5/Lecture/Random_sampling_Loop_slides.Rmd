@@ -16,6 +16,8 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
 # More on Visualization
 
+- Find your plot in https://r-graph-gallery.com/ridgeline-plot.html
+
 - How we can put two plots together?
 - `patchwork` package
 ```{r}
