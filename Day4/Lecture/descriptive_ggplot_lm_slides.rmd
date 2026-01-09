@@ -92,7 +92,7 @@ ggplot(data, aes(x = UrbanPop, y = Assault)) +
 
 # alternatively
 ggplot() + 
-  geom_point(data, aes(x = UrbanPop, y = Assault))
+  geom_point(aes(x = UrbanPop, y = Assault), data = data)
 
 # sort of equivalent to doing this with the base R plot 
 plot(data$UrbanPop, data$Assault)
